@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>श्रीवासुदेव निवास - प्रमाणपत्र</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      background: linear-gradient(135deg, #1a0a00 0%, #3d1c00 50%, #1a0a00 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h1.page-title {
+      color: #f5c842;
+      font-size: 1.5rem;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(245,200,66,0.5);
+    }
+
+    .form-area {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 30px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .form-area label {
+      color: #f5c842;
+      font-size: 1rem;
+    }
+
+    .form-area input {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 2px solid #c8960c;
+      background: rgba(255,255,255,0.95);
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      font-size: 1rem;
+      width: 260px;
+      color: #5a0000;
+      outline: none;
+    }
+
+    .form-area input:focus {
+      border-color: #f5c842;
+      box-shadow: 0 0 12px rgba(245,200,66,0.4);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Noto Sans Devanagari', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-generate {
+      background: linear-gradient(135deg, #c8960c, #f5c842);
+      color: #3d1c00;
+    }
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(245,200,66,0.5); }
+
+    .btn-download {
+      background: linear-gradient(135deg, #7a0000, #c00000);
+      color: #fff;
+      display: none;
+    }
+    .btn-download:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(192,0,0,0.5); }
+
+    /* Certificate wrapper */
+    .cert-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    #certificate-canvas {
+      max-width: 100%;
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    }
+
+    .note {
+      color: rgba(245,200,66,0.6);
+      font-size: 0.8rem;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .hosting-tip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(245,200,66,0.3);
+      border-radius: 12px;
+      padding: 16px 24px;
+      max-width: 700px;
+      margin-top: 24px;
+      color: #f5c842;
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .hosting-tip strong { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">🕉 श्रीवासुदेव निवास प्रमाणपत्र</h1>
+
+  <div class="form-area">
+    <label>नाव प्रविष्ट करा:</label>
+    <input type="text" id="nameInput" placeholder="उदा: श्री रामचंद्र शर्मा" />
+    <div class="btn-group">
+      <button class="btn-generate" onclick="generateCertificate()">प्रमाणपत्र तयार करा</button>
+      <button class="btn-download" id="downloadBtn" onclick="downloadCertificate()">⬇ डाउनलोड करा</button>
+    </div>
+  </div>
+
+  <div class="cert-wrapper">
+    <canvas id="certificate-canvas"></canvas>
+  </div>
+
+  <p class="note">* नाव टाकल्यानंतर प्रमाणपत्र तयार होईल आणि डाउनलोड करता येईल.</p>
+
+  <div class="hosting-tip">
+    <strong>🌐 Hosting Suggestions:</strong><br>
+    This is a single HTML file — host it FREE on:<br>
+    • <strong>Netlify</strong> (netlify.com) — drag & drop deploy, instant URL<br>
+    • <strong>Vercel</strong> (vercel.com) — fast global CDN<br>
+    • <strong>GitHub Pages</strong> — free with your GitHub account<br>
+    Simply upload this <code>certificate-generator.html</code> file and share the link!
+  </div>
+
+  <script>
+    const BG_IMAGE_URL = '/mnt/user-data/uploads/1772176747146_image.png';
+
+    // We'll load image from the same folder. For hosting, place the image next to the HTML.
+    // For demo, we try to load relative; for production host both files together.
+
+    let bgImage = new Image();
+    bgImage.crossOrigin = 'anonymous';
+
+    // Try loading the uploaded image path (works in Claude environment)
+    bgImage.src = '/mnt/user-data/uploads/1772176747146_image.png';
+
+    bgImage.onload = () => {
+      // Draw blank canvas on load
+      drawCertificate('{{नाव}}');
+    };
+
+    bgImage.onerror = () => {
+      // Fallback: prompt user
+      document.querySelector('.note').textContent =
+        '⚠ प्रतिमा लोड होत नाही. सर्व्हरवर image.png फाइल HTML सोबत ठेवा.';
+    };
+
+    function drawCertificate(name) {
+      const canvas = document.getElementById('certificate-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const W = bgImage.naturalWidth || 1280;
+      const H = bgImage.naturalHeight || 900;
+      canvas.width = W;
+      canvas.height = H;
+
+      // Draw background image
+      ctx.drawImage(bgImage, 0, 0, W, H);
+
+      // --- Replace {{नाव}} area ---
+      // Position determined from the certificate layout (roughly centered, ~62% down)
+      const nameFontSize = Math.round(W * 0.042);
+      ctx.font = `bold ${nameFontSize}px 'Noto Sans Devanagari', serif`;
+      ctx.textAlign = 'center';
+
+      // First clear the placeholder area with white
+      const nameY = H * 0.597;
+      const clearW = W * 0.55;
+      const clearH = nameFontSize * 1.6;
+      ctx.clearRect(W / 2 - clearW / 2, nameY - nameFontSize, clearW, clearH);
+      // Redraw white bg to match certificate
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(W / 2 - clearW / 2, nameY - nameFontSize, clearW, clearH);
+
+      // Draw decorative underline (matching original gold line)
+      const lineY = nameY + nameFontSize * 0.55;
+      const lineW = W * 0.45;
+      ctx.strokeStyle = '#8B6914';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(W / 2 - lineW / 2, lineY);
+      ctx.lineTo(W / 2 + lineW / 2, lineY);
+      ctx.stroke();
+
+      // Draw name in dark red (matching certificate style)
+      ctx.fillStyle = '#8B0000';
+      ctx.fillText(name, W / 2, nameY);
+    }
+
+    function generateCertificate() {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) {
+        alert('कृपया नाव प्रविष्ट करा.');
+        return;
+      }
+      if (!bgImage.complete || bgImage.naturalWidth === 0) {
+        alert('पार्श्वभूमी प्रतिमा लोड होत नाही. कृपया HTML व image.png एकत्र ठेवा.');
+        return;
+      }
+      drawCertificate(name);
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+    }
+
+    function downloadCertificate() {
+      const name = document.getElementById('nameInput').value.trim() || 'certificate';
+      const canvas = document.getElementById('certificate-canvas');
+      const link = document.createElement('a');
+      link.download = `certificate_${name}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Allow Enter key
+    document.getElementById('nameInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') generateCertificate();
+    });
+  </script>
+</body>
+</html>
