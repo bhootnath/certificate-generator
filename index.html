@@ -151,7 +151,7 @@
   </div>
 
   <script>
-    const BG_IMAGE_URL = '/mnt/user-data/uploads/1772176747146_image.png';
+    const BG_IMAGE_URL = 'image.png';
 
     // We'll load image from the same folder. For hosting, place the image next to the HTML.
     // For demo, we try to load relative; for production host both files together.
@@ -160,7 +160,7 @@
     bgImage.crossOrigin = 'anonymous';
 
     // Try loading the uploaded image path (works in Claude environment)
-    bgImage.src = '/mnt/user-data/uploads/1772176747146_image.png';
+    bgImage.src = 'image.png';
 
     bgImage.onload = () => {
       // Draw blank canvas on load
