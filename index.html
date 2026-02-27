@@ -128,7 +128,7 @@
 
   <div class="form-area">
     <label>नाव  लिहा </label>
-    <input type="text" id="nameInput" placeholder="उदा: श्री रामचंद्र शर्मा" />
+    <input type="text" id="nameInput" placeholder="उदा: श्री रामचंद्र " />
     <div class="btn-group">
       <button class="btn-generate" onclick="generateCertificate()">प्रमाणपत्र तयार करा</button>
       <button class="btn-download" id="downloadBtn" onclick="downloadCertificate()">⬇ डाउनलोड करा</button>
@@ -151,7 +151,7 @@
   </div>
 
   <script>
-    const BG_IMAGE_URL = 'image.png';
+    const BG_IMAGE_URL = 'baseimage.png';
 
     // We'll load image from the same folder. For hosting, place the image next to the HTML.
     // For demo, we try to load relative; for production host both files together.
@@ -160,7 +160,7 @@
     bgImage.crossOrigin = 'anonymous';
 
     // Try loading the uploaded image path (works in Claude environment)
-    bgImage.src = 'image.png';
+    bgImage.src = 'baseimage.png';
 
     bgImage.onload = () => {
       // Draw blank canvas on load
